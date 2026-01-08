@@ -57,3 +57,8 @@ Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 
 [project.scripts]
 hut = "builders_hut.__main__:main"
+
+[tool.uv.workspace]
+members = [
+    "demo",
+]

@@ -16,18 +16,21 @@ def setup_project(location: Path, setup_cls: type[BaseSetup], **config) -> None:
 
 
 if __name__ == "__main__":
-    project_location = (
-        "C:/Users/User/OneDrive/Documents/work/personal/builders-hut/demo"
-    )
+    try:
+        project_location = (
+            "C:/Users/User/OneDrive/Documents/work/personal/builders-hut/demo"
+        )
 
-    project_location = Path(project_location)
+        project_location = Path(project_location)
 
-    if project_location.exists():
-        shutil.rmtree(project_location)
+        if project_location.exists():
+            shutil.rmtree(project_location)
 
-    setup_to_do = [SetupStructure, SetupFiles, EnvSetup]
+        setup_to_do = [SetupStructure, SetupFiles, EnvSetup]
 
-    for setup in setup_to_do:
-        setup_project(project_location, setup)
+        for setup in setup_to_do:
+            setup_project(project_location, setup, package_manager="uv")
 
-    print("Project setup completed successfully.")
+        print("Project setup completed successfully.")
+    except Exception as e:
+        print(f"Project setup failed: {e}")
