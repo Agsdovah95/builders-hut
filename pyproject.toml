@@ -50,15 +50,10 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://example.com"
-Documentation = "https://readthedocs.org"
-Repository = "https://github.com/me/spam.git"
-Issues = "https://github.com/me/spam/issues"
-Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+Documentation = "https://github.com/Agsdovah95/builders-hut"
+Repository = "https://github.com/Agsdovah95/builders-hut"
+Issues = "https://github.com/Agsdovah95/builders-hut"
+Changelog = "https://github.com/Agsdovah95/builders-hut"
 
 [project.scripts]
 hut = "builders_hut.__main__:main"
-
-[tool.uv.workspace]
-members = [
-    "demo",
-]
