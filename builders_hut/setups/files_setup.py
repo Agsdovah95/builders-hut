@@ -1,6 +1,7 @@
 from builders_hut.setups.base_setup import BaseSetup
 from rich import print
 
+
 FILES_TO_CREATE = [
     # Main application file
     "app/main.py",
@@ -16,19 +17,60 @@ FILES_TO_CREATE = [
     "app/database/__init__.py",
     "app/workers/__init__.py",
     "app/api/__init__.py",
+    "app/api/v1/__init__.py",
+    "app/api/common.py",
+    "app/templates/index.html",
     # Test initialization file
     "tests/__init__.py",
     # Script files
-    "scripts/dev.py",
-    "scripts/prod.py",
+    "app/scripts/dev.py",
+    "app/scripts/prod.py",
+    # Configuration
+    "pyproject.toml",
 ]
 
 
 class SetupFiles(BaseSetup):
-    """Setup all the required files for the project."""
+    """
+    Setup all the required files for the project.
+
+        Structure:
+    .
+    ├── app
+    │   ├── api             # API route definitions
+    |   |   ├── __init__.py # init file
+    │   ├── core            # Core configuration and application settings
+    |   |   ├── __init__.py # init file
+    |   |   ├── config.py   # Project Configurations
+    |   |   ├── logger.py   # Logger
+    │   ├── database        # Database setup, connections, and sessions
+    |   |   ├── __init__.py # init file
+    │   ├── models          # ORM / data models
+    |   |   ├── __init__.py # init file
+    │   ├── repositories    # Data access layer
+    |   |   ├── __init__.py # init file
+    │   ├── schemas         # Request and response schemas
+    |   |   ├── __init__.py # init file
+    │   ├── services        # Business logic
+    |   |   ├── __init__.py # init file
+    │   ├── utils           # Utility and helper functions
+    |   |   ├── __init__.py # init file
+    │   ├── workers         # Background jobs and async workers
+    |   |   ├── __init__.py # init file
+    |   ├── templates       # Static html for home page
+    |   |   ├── index.html  # Html file
+    │   └── main.py         # Application entry point
+    │
+    ├── tests               # Unit and integration tests
+    |   ├── __init__.py     # init file
+    ├── scripts             # Utility and automation scripts
+    |   ├── __init__.py     # init file
+    |   ├── dev.py          # Run server in dev mode
+    |   ├── prod.py         # Run server in prod mode
+    """
 
     def create(self):
         for file_path in FILES_TO_CREATE:
             full_path = self.location / file_path
             full_path.touch(exist_ok=True)
-            print(f"[bold green]Created file:[/bold green] {file_path.split('/')[-1]}")
+            print(f"Created file: [bold green]{file_path.split('/')[-1]}[/bold green]")
