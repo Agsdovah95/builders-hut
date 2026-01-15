@@ -39,13 +39,12 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
-    "Operating System :: MacOS",
-    "Operating System :: MacOS :: MacOS X",
 ]
 dependencies = [
     "build",
     "twine",
     "typer",
+    "tomlkit"
 ]
 
 [project.urls]

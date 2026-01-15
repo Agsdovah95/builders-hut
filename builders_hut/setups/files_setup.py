@@ -27,6 +27,7 @@ FILES_TO_CREATE = [
     "app/scripts/prod.py",
     # Configuration
     "pyproject.toml",
+    ".env",
 ]
 
 
