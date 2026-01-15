@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "builders-hut"
-version = "0.1.0"
+version = "0.3.0"
 requires-python = ">=3.13"
 description = "FastAPI Scaffolding Tool"
 readme = "README.md"
@@ -14,7 +14,7 @@ authors = [
 maintainers = [
   {name = "Arnab Gupta", email = "arnabgupta84@gmail.com"},
 ]
-license = {file = "LICENSE.txt"}
+license = "BSD-3-Clause"
 keywords = [
     "fastapi",
     "scaffolding",
@@ -35,7 +35,6 @@ keywords = [
 classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
-    "License :: OSI Approved :: BSD License",
     "Intended Audience :: Developers",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
@@ -48,11 +47,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://example.com"
-Documentation = "https://github.com/Agsdovah95/builders-hut"
+Homepage = "https://github.com/Agsdovah95/builders-hut"
+Documentation = "https://github.com/Agsdovah95/builders-hut/blob/main/README.md"
 Repository = "https://github.com/Agsdovah95/builders-hut"
-Issues = "https://github.com/Agsdovah95/builders-hut"
-Changelog = "https://github.com/Agsdovah95/builders-hut"
+Issues = "https://github.com/Agsdovah95/builders-hut/issues"
+Changelog = "https://github.com/Agsdovah95/builders-hut/blob/main/CHANGELOG.md"
 
 [project.scripts]
 hut = "builders_hut.__main__:main"

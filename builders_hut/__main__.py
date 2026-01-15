@@ -1,9 +1,9 @@
-from builders_hut.cmd_interface import interface
+from builders_hut.cmd_interface import app
 
 
 def main():
     try:
-        interface()
+        app()
     except Exception as e:
         print(f"Project setup failed: {e}")
 
