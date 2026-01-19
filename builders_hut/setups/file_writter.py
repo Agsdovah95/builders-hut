@@ -1,32 +1,14 @@
 from pathlib import Path
-from builders_hut.setups.base_setup import BaseSetup
-from builders_hut.setups.file_contents import (
-    DEV_FILE_CONTENT,
-    MAIN_FILE_CONTENT,
-    COMMON_API_CONTENT,
-    COMMON_API_INIT,
-    CORE_FILE_CONTENT,
-    TEMPLATE_FILE_CONTENT,
-    ENV_FILE_CONTENT,
-)
+
+from builders_hut.setups import FILES_TO_WRITE, BaseSetup
 
 
 class SetupFileWriter(BaseSetup):
-    FILES_TO_WRITE: dict[Path, str] = {
-        Path("app/main.py"): MAIN_FILE_CONTENT,
-        Path("app/scripts/dev.py"): DEV_FILE_CONTENT,
-        Path("app/api/common.py"): COMMON_API_CONTENT,
-        Path("app/api/__init__.py"): COMMON_API_INIT,
-        Path("app/core/config.py"): CORE_FILE_CONTENT,
-        Path("app/templates/index.html"): TEMPLATE_FILE_CONTENT,
-        Path(".env"): ENV_FILE_CONTENT,
-    }
-
     def create(self):
         self._write_files()
 
     def _write_files(self) -> None:
-        for path, content in self.FILES_TO_WRITE.items():
+        for path, content in FILES_TO_WRITE.items():
             if path.name == ".env":
                 content = content.format(
                     title=self.name,

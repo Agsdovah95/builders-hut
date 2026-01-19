@@ -1,6 +1,8 @@
+"""app/templates/*"""
+
 from textwrap import dedent
 
-TEMPLATE_FILE_CONTENT = dedent("""
+APP_TEMPLATES_INDEX_CONTENT = dedent("""
 <!DOCTYPE html>
 <html lang="en">
 

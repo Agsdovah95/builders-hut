@@ -1,34 +1,6 @@
-from builders_hut.setups.base_setup import BaseSetup
 from rich import print
 
-
-FILES_TO_CREATE = [
-    # Main application file
-    "app/main.py",
-    # Core configuration and logger files
-    "app/core/config.py",
-    "app/core/logger.py",
-    # __init__.py files for package initialization
-    "app/models/__init__.py",
-    "app/schemas/__init__.py",
-    "app/services/__init__.py",
-    "app/repositories/__init__.py",
-    "app/utils/__init__.py",
-    "app/database/__init__.py",
-    "app/workers/__init__.py",
-    "app/api/__init__.py",
-    "app/api/v1/__init__.py",
-    "app/api/common.py",
-    "app/templates/index.html",
-    # Test initialization file
-    "tests/__init__.py",
-    # Script files
-    "app/scripts/dev.py",
-    "app/scripts/prod.py",
-    # Configuration
-    "pyproject.toml",
-    ".env",
-]
+from builders_hut.setups import BaseSetup
 
 
 class SetupFiles(BaseSetup):
@@ -70,8 +42,41 @@ class SetupFiles(BaseSetup):
     |   ├── prod.py         # Run server in prod mode
     """
 
+    FILES_TO_CREATE = [
+        # Main application file
+        "app/main.py",
+        # Core configuration and logger files
+        "app/core/config.py",
+        "app/core/logger.py",
+        "app/core/lifespan.py",
+        "app/core/__init__.py",
+        # __init__.py files for package initialization
+        "app/models/__init__.py",
+        "app/models/common.py",
+        "app/schemas/__init__.py",
+        "app/services/__init__.py",
+        "app/repositories/__init__.py",
+        "app/utils/__init__.py",
+        "app/database/__init__.py",
+        "app/database/session.py",
+        "app/workers/__init__.py",
+        "app/api/__init__.py",
+        "app/api/v1/__init__.py",
+        "app/api/common.py",
+        "app/templates/index.html",
+        # Test initialization file
+        "tests/__init__.py",
+        # Script files
+        "app/scripts/dev.py",
+        "app/scripts/prod.py",
+        # Configuration
+        "pyproject.toml",
+        ".env",
+        ".gitignore",
+    ]
+
     def create(self):
-        for file_path in FILES_TO_CREATE:
+        for file_path in self.FILES_TO_CREATE:
             full_path = self.location / file_path
             full_path.touch(exist_ok=True)
             print(f"Created file: [bold green]{file_path.split('/')[-1]}[/bold green]")

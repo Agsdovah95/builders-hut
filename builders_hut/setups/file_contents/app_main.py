@@ -1,10 +1,12 @@
+"app/main.py"
+
 from textwrap import dedent
 
-MAIN_FILE_CONTENT = dedent("""
-
+APP_MAIN_CONTENT = dedent("""
 from fastapi import FastAPI
-from app.core.config import settings
+from app.core import settings, lifespan
 from app.api import common_router
+
 
 def create_app() -> FastAPI:
     '''
@@ -16,6 +18,7 @@ def create_app() -> FastAPI:
         title=settings.TITLE,
         description=settings.DESCRIPTION,
         version=settings.VERSION,
+        lifespan=lifespan,
     )
 
     app.include_router(common_router)
@@ -24,6 +27,4 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-
 """)

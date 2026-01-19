@@ -1,6 +1,8 @@
+"""app/scripts/*"""
+
 from textwrap import dedent
 
-DEV_FILE_CONTENT = dedent("""
+APP_SCRIPTS_DEV_CONTENT = dedent("""
 import uvicorn
 
 

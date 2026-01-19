@@ -1,21 +1,6 @@
-from builders_hut.setups.base_setup import BaseSetup
 from rich import print
 
-# Define all necessary directories for the project structure
-ALL_DIRS = [
-    "api",
-    "api/v1",
-    "database",
-    "schemas",
-    "services",
-    "repositories",
-    "core",
-    "models",
-    "workers",
-    "utils",
-    "scripts",
-    "templates",
-]
+from builders_hut.setups import BaseSetup
 
 
 class SetupStructure(BaseSetup):
@@ -41,12 +26,27 @@ class SetupStructure(BaseSetup):
     ├── tests             # Unit and integration tests
     """
 
+    ALL_DIRS = [
+        "api",
+        "api/v1",
+        "database",
+        "schemas",
+        "services",
+        "repositories",
+        "core",
+        "models",
+        "workers",
+        "utils",
+        "scripts",
+        "templates",
+    ]
+
     def create(self):
         print(
             f"Creating directory structure at: [bold green]{self.location}[/bold green]"
         )
         (self.location / "tests").mkdir(exist_ok=True, parents=True)
         (self.location / "app").mkdir(exist_ok=True, parents=True)
-        for dir_name in ALL_DIRS:
+        for dir_name in self.ALL_DIRS:
             (self.location / "app" / dir_name).mkdir(exist_ok=True, parents=True)
         print("All directories created [bold green]successfully![/bold green]")

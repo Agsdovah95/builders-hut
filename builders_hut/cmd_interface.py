@@ -12,7 +12,10 @@ from builders_hut.setups import (
 from builders_hut.utils import setup_project
 
 console = Console()
-app = typer.Typer(invoke_without_command=True)
+app = typer.Typer(
+    invoke_without_command=True,
+    no_args_is_help=True,
+)
 
 BANNER = r"""
 [bold cyan]
@@ -22,20 +25,37 @@ BANNER = r"""
 | |_) | |_| | | | (_| |  __/ |  \__ \ |  _  | |_| | |_ 
 |____/ \__,_|_|_|\__,_|\___|_|  |___/ |_| |_|\__,_|\__|
 [/bold cyan]
-[dim]🏠 FastAPI Scaffolding Tool[/dim]
 """
+
+APP_VERSION = "0.3.7"
 
 
 @app.callback()
-def main():
+def main(
+    ctx: typer.Context,
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        help="Show the version and exit",
+        is_eager=True,
+    ),
+):
     """Builders Hut – FastAPI Scaffolding Tool"""
     console.print(BANNER)
+
+    if version:
+        console.print(f"[bold green]hut version {APP_VERSION}[/bold green]")
+
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
+        raise typer.Exit()
 
 
 @app.command()
 def build(
     name: str = typer.Option(
-        None,
+        Path.cwd().name,
         "--name",
         "-n",
         help="Project name",
@@ -56,7 +76,7 @@ def build(
         prompt="Enter project version",
     ),
     path: Path = typer.Option(
-        Path.cwd() / "demo",
+        Path.cwd(),
         "--path",
         "-p",
         help="Project directory",
@@ -67,13 +87,6 @@ def build(
     """
     try:
         project_location = path.resolve()
-
-        if project_location.exists():
-            typer.secho(
-                f"Directory already exists: {project_location}",
-                fg=typer.colors.RED,
-            )
-            raise typer.Exit(code=1)
 
         setup_steps = [
             SetupStructure,
