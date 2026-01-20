@@ -1,6 +1,5 @@
-from rich import print
-
 from builders_hut.setups import BaseSetup
+from builders_hut.utils import make_folder
 
 
 class SetupStructure(BaseSetup):
@@ -20,7 +19,6 @@ class SetupStructure(BaseSetup):
     │   ├── services      # Business logic
     │   ├── utils         # Utility and helper functions
     │   ├── workers       # Background jobs and async workers
-    |   ├── scripts       # Utility and automation scripts to run server
     |   ├── templates     # Templates
     │
     ├── tests             # Unit and integration tests
@@ -37,16 +35,11 @@ class SetupStructure(BaseSetup):
         "models",
         "workers",
         "utils",
-        "scripts",
         "templates",
     ]
 
     def create(self):
-        print(
-            f"Creating directory structure at: [bold green]{self.location}[/bold green]"
-        )
-        (self.location / "tests").mkdir(exist_ok=True, parents=True)
-        (self.location / "app").mkdir(exist_ok=True, parents=True)
+        make_folder(self.location / "app")
+        make_folder(self.location / "tests")
         for dir_name in self.ALL_DIRS:
-            (self.location / "app" / dir_name).mkdir(exist_ok=True, parents=True)
-        print("All directories created [bold green]successfully![/bold green]")
+            make_folder(self.location / "app" / dir_name)

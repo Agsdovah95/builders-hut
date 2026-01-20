@@ -16,8 +16,8 @@ HOST="0.0.0.0"
 # Database
 DB_USER="postgres"
 DB_PASS="postgres"
-DB_HOST="localhost"
+DB_HOST="loclahost"
 DB_PORT=5432
 DB_NAME="postgres"
-DB_TYPE="postgres"
+DB_TYPE="{DB_TYPE}"
 """)

@@ -58,18 +58,18 @@ class Settings(BaseSettings):
         description="The host to run the application on", validation_alias="HOST"
     )
 
-    DB_USER: str = Field(description="Database user name", validation_alias="DB_USER")
+    DB_USER: str = Field(..., description="Database user name", validation_alias="DB_USER")
 
-    DB_PASS: str = Field(description="Database password", validation_alias="DB_PASS")
+    DB_PASS: str = Field(..., description="Database password", validation_alias="DB_PASS")
 
-    DB_HOST: str = Field(description="Database Host", validation_alias="DB_HOST")
+    DB_HOST: str = Field(..., description="Database Host", validation_alias="DB_HOST")
 
-    DB_PORT: str = Field(description="Database port", validation_alias="DB_PORT")
+    DB_PORT: str = Field(..., description="Database port", validation_alias="DB_PORT")
 
-    DB_NAME: str = Field(description="Database Name", validation_alias="DB_NAME")
+    DB_NAME: str = Field(..., description="Database Name", validation_alias="DB_NAME")
 
     DB_TYPE: Literal["postgres", "mysql", "sqlite", "mongodb"] = Field(
-        description="Which database to use for the project", validation_alias="DB_TYPE"
+        "postgres", description="Which database to use for the project", validation_alias="DB_TYPE"
     )
 
     @property

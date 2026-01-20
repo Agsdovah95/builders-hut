@@ -1,9 +1,6 @@
-import subprocess
-
-from rich import print
-
 from builders_hut.setups import BaseSetup
-from builders_hut.utils import get_platform, write_pyproject
+from builders_hut.utils import write_file, run_subprocess, get_python_file
+from typing import Literal
 
 PACKAGES = [
     "fastapi",
@@ -19,90 +16,69 @@ PACKAGES = [
 DEV_PACKAGES = ["pytest"]
 
 
+DB_SQL_PACKAGES = {
+    "postgres": ["sqlmodel", "asyncpg", "psycopg2-binary"],
+    "mysql": ["sqlmodel", "aiomysql", "pymysql"],
+    "sqlite": ["sqlmodel", "aiosqlite"],
+}
+
+SQL_COMMON_PACKAGE = ["alembic"]
+
+DEV_PACKAGES_EXTENDED = ["-r requirements.txt"]
+
+
 class SetupEnv(BaseSetup):
     """Create Env and Install Base Packages"""
 
     def create(self):
         try:
-            platform = get_platform()
+            try:
+                if self.database_type == "sql":
+                    PACKAGES.extend(SQL_COMMON_PACKAGE)
+                    PACKAGES.extend(DB_SQL_PACKAGES[self.database_provider])
 
-            print(
-                f"Working On: [bold green]{platform[0].upper()}{platform[1:]}[/bold green]"
-            )
+                write_file(self.location / "requirements.txt", "\n".join(PACKAGES))
 
-            print(f"Working Directory: {self.location}")
+                DEV_PACKAGES_EXTENDED.extend(DEV_PACKAGES)
+                write_file(
+                    self.location / "requirements_dev.txt",
+                    "\n".join(DEV_PACKAGES_EXTENDED),
+                )
 
-            print("Updating pyproject file...")
+            except Exception as e:
+                print(e)
+                raise RuntimeError("Could not write to requirements file")
 
             try:
-                write_pyproject(
-                    path=(self.location / "pyproject.toml"),
-                    name=self.name,
-                    description=self.description,
-                    version=self.version,
-                    dependencies=PACKAGES,
-                    dev_dependencies=DEV_PACKAGES,
-                )
-            except Exception:
-                raise RuntimeError("Could not write to pyproject file")
+                run_subprocess(self.location, "python -m venv .venv")
 
-            print("Initialize with git")
-
-            try:
-                subprocess.run(
-                    "git init",
-                    cwd=self.location,
-                    shell=True,
-                    check=True,
-                    stderr=subprocess.DEVNULL,
-                    stdout=subprocess.DEVNULL,
-                )
-            except Exception:
-                pass
-
-            print("Creating Environment...")
-
-            try:
-                subprocess.run(
-                    "python -m venv .venv",
-                    cwd=self.location,
-                    shell=True,
-                    check=True,
-                    stderr=subprocess.DEVNULL,
-                    stdout=subprocess.DEVNULL,
-                )
             except Exception:
                 raise RuntimeError("Could not create virtual env for project")
 
-            print("Installing Packages...")
-
-            command = "pip install -e ."
-            python_file = (
-                ".venv/bin/python -m"
-                if platform == "linux"
-                else ".venv\\Scripts\\python.exe -m"
-            )
+            command = "pip install -r requirements_dev.txt"
+            python_file = get_python_file()
 
             full_command = f"{python_file} {command}"
 
             try:
-                subprocess.run(
-                    full_command,
-                    cwd=self.location,
-                    shell=True,
-                    check=True,
-                    stderr=subprocess.DEVNULL,
-                    stdout=subprocess.DEVNULL,
-                )
+                run_subprocess(self.location, full_command)
             except Exception:
                 raise RuntimeError("Could not install packages")
-
-            print("[bold green]Done [/bold green]")
 
         except Exception as e:
             raise RuntimeError(f"Failed to create environment: {str(e)}")
 
-    def configure(self, name: str, description: str, version: str):
+    def configure(
+        self,
+        name: str,
+        description: str,
+        version: str,
+        database_provider: Literal["postgres", "mysql", "sqlite", "mongodb"],
+        database_type: Literal["sql", "nosql"],
+        **kwargs,
+    ):
         self.name = name
         self.description = description
         self.version = version
+        self.database_provider = database_provider
+        self.database_type = database_type

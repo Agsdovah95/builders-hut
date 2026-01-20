@@ -2,6 +2,7 @@ from pathlib import Path
 from builders_hut.setups.base_setup import BaseSetup
 import platform
 import tomlkit
+import subprocess
 
 
 def write_pyproject(
@@ -73,3 +74,48 @@ def get_platform():
     """check the operating system"""
     system = platform.system()
     return system.lower()
+
+
+def make_folder(loc: Path):
+    """make a folder in the given path"""
+    loc.mkdir(exist_ok=True, parents=True)
+
+
+def make_file(file: Path):
+    """make a file in the given location"""
+    file.touch(exist_ok=True)
+
+
+def write_file(path: Path, content: str) -> None:
+    """write data to a file"""
+    if not path.exists():
+        raise FileNotFoundError(f"{path} does not exist")
+
+    path.write_text(content, encoding="utf-8")
+
+
+def run_subprocess(location: Path, command: str):
+    """
+    Run subprocess command
+    """
+    subprocess.run(
+        command,
+        cwd=location,
+        shell=True,
+        check=True,
+        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+    )
+
+
+def get_python_file():
+    """use the python file in the venv"""
+    platform = get_platform()
+
+    python_file = (
+        ".venv/bin/python -m"
+        if platform == "linux"
+        else ".venv\\Scripts\\python.exe -m"
+    )
+
+    return python_file

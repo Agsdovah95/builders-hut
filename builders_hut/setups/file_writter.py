@@ -1,9 +1,12 @@
-from pathlib import Path
-
 from builders_hut.setups import FILES_TO_WRITE, BaseSetup
+from builders_hut.utils import write_file
 
 
 class SetupFileWriter(BaseSetup):
+    """
+    Write data to the files created previously
+    """
+
     def create(self):
         self._write_files()
 
@@ -14,18 +17,20 @@ class SetupFileWriter(BaseSetup):
                     title=self.name,
                     description=self.description,
                     version=self.version,
+                    DB_TYPE=self.database_provider,
                 )
             path = self.location / path
-            self._write_file(path, content)
+            write_file(path, content)
 
-    @staticmethod
-    def _write_file(path: Path, content: str) -> None:
-        if not path.exists():
-            raise FileNotFoundError(f"{path} does not exist")
-
-        path.write_text(content, encoding="utf-8")
-
-    def configure(self, name: str, description: str, version: str):
+    def configure(
+        self,
+        name: str,
+        description: str,
+        version: str,
+        database_provider: str,
+        **kwargs,
+    ):
         self.name = name
         self.description = description
         self.version = version
+        self.database_provider = database_provider

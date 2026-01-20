@@ -5,9 +5,8 @@ from .app_core import (
     APP_CORE_CONFIG_CONTENT,
     APP_CORE_LIFESPAN_CONTENT,
 )
-from .app_database import APP_DATABASE_SESSION_CONTENT
+from .app_database import APP_DATABASE_SESSION_CONTENT_FOR_SQL
 from .app_model import APP_MODELS_COMMON_CONTENT
-from .app_scripts import APP_SCRIPTS_DEV_CONTENT
 from .app_templates import APP_TEMPLATES_INDEX_CONTENT
 
 
@@ -26,11 +25,9 @@ __all__ = [
     APP_CORE_CONFIG_CONTENT,
     APP_CORE_LIFESPAN_CONTENT,
     # Database
-    APP_DATABASE_SESSION_CONTENT,
+    APP_DATABASE_SESSION_CONTENT_FOR_SQL,
     # Model
     APP_MODELS_COMMON_CONTENT,
-    # Scripts
-    APP_SCRIPTS_DEV_CONTENT,
     # Templates
     APP_TEMPLATES_INDEX_CONTENT,
     # .env File

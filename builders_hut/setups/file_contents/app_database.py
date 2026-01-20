@@ -2,7 +2,7 @@
 
 from textwrap import dedent
 
-APP_DATABASE_SESSION_CONTENT = dedent('''
+APP_DATABASE_SESSION_CONTENT_FOR_SQL = dedent('''
 """
 Database Connections Management
 """

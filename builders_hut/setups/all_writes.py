@@ -12,12 +12,6 @@ FILES_TO_WRITE: dict[Path, str] = {
     Path("app/core/__init__.py"): file_contents.APP_CORE_INIT_CONTENT,
     Path("app/core/config.py"): file_contents.APP_CORE_CONFIG_CONTENT,
     Path("app/core/lifespan.py"): file_contents.APP_CORE_LIFESPAN_CONTENT,
-    # Database
-    Path("app/database/session.py"): file_contents.APP_DATABASE_SESSION_CONTENT,
-    # Models
-    Path("app/models/common.py"): file_contents.APP_MODELS_COMMON_CONTENT,
-    # Scripts
-    Path("app/scripts/dev.py"): file_contents.APP_SCRIPTS_DEV_CONTENT,
     # Templates
     Path("app/templates/index.html"): file_contents.APP_TEMPLATES_INDEX_CONTENT,
     # .env Files

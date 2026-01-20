@@ -2,14 +2,24 @@ from pathlib import Path
 
 import typer
 from rich.console import Console
-
+from typing import Literal
 from builders_hut.setups import (
     SetupEnv,
     SetupFiles,
     SetupFileWriter,
     SetupStructure,
+    SetupDatabase,
+    SetupGithub,
 )
 from builders_hut.utils import setup_project
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TimeElapsedColumn,
+)
+
 
 console = Console()
 app = typer.Typer(
@@ -27,7 +37,7 @@ BANNER = r"""
 [/bold cyan]
 """
 
-APP_VERSION = "0.3.7"
+APP_VERSION = "0.3.9"
 
 
 @app.callback()
@@ -59,21 +69,18 @@ def build(
         "--name",
         "-n",
         help="Project name",
-        prompt="Enter project title",
     ),
     description: str = typer.Option(
         "A new project",
         "--description",
         "-d",
         help="Project description",
-        prompt="Enter project description",
     ),
     version: str = typer.Option(
         "0.1.0",
         "--version",
         "-v",
         help="Project version",
-        prompt="Enter project version",
     ),
     path: Path = typer.Option(
         Path.cwd(),
@@ -81,32 +88,99 @@ def build(
         "-p",
         help="Project directory",
     ),
+    database_type: Literal["sql", "nosql"] = typer.Option(
+        "sql",
+        "--database-type",
+        "-dt",
+        help="Database Type (sql, nosql)",
+    ),
+    database_provider: Literal["postgres", "mysql", "sqlite", "mongodb"] = typer.Option(
+        "postgres",
+        "--database-provider",
+        "-dp",
+        help="Database Provider (postgres, mysql, sqlite, mongodb)",
+    ),
+    accept_default: bool = typer.Option(
+        None,
+        "--accept_defaults",
+        "-y",
+        help="Run command with all default values selected",
+    ),
 ):
     """
     Build project structure (CLI or interactive).
     """
+    # ===== Defaults =====
+    DEFAULTS = {
+        "name": Path.cwd().name,
+        "description": "A new project",
+        "version": "0.1.0",
+        "database_type": "sql",
+        "database_provider": "postgres",
+    }
+
+    # ===== Apply defaults or prompt =====
+    if accept_default:
+        name = name or DEFAULTS["name"]
+        description = description or DEFAULTS["description"]
+        version = version or DEFAULTS["version"]
+        database_type = database_type or DEFAULTS["database_type"]
+        database_provider = database_provider or DEFAULTS["database_provider"]
+    else:
+        name = typer.prompt("Enter Project Title", default=DEFAULTS["name"])
+        description = typer.prompt(
+            "Enter Project Description", default=DEFAULTS["description"]
+        )
+        version = typer.prompt("Enter Project Version", default=DEFAULTS["version"])
+        database_type = typer.prompt(
+            "Enter Database Type", default=DEFAULTS["database_type"]
+        )
+        database_provider = typer.prompt(
+            "Enter Database Provider", default=DEFAULTS["database_provider"]
+        )
+
     try:
         project_location = path.resolve()
 
         setup_steps = [
             SetupStructure,
             SetupFiles,
+            SetupGithub,
             SetupEnv,
             SetupFileWriter,
+            SetupDatabase,
         ]
 
-        for setup in setup_steps:
-            setup_project(
-                project_location,
-                setup,
-                name=name,
-                description=description,
-                version=version,
-            )
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[bold cyan]{task.description}"),
+            BarColumn(),
+            TimeElapsedColumn(),
+        ) as progress:
+            task = progress.add_task("Setting up project", total=len(setup_steps))
+
+            for setup_cls in setup_steps:
+                progress.update(task, description=f"Running {setup_cls.__name__}")
+
+                setup_project(
+                    project_location,
+                    setup_cls,
+                    name=name,
+                    description=description,
+                    version=version,
+                    database_type=database_type,
+                    database_provider=database_provider,
+                )
+
+                progress.advance(task)
 
         typer.secho(
             "Project setup completed successfully.",
             fg=typer.colors.GREEN,
+        )
+        typer.secho(
+            "Update .env File Content Before Starting The Server",
+            fg=typer.colors.MAGENTA,
         )
 
     except Exception as e:
