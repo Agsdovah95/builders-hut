@@ -19,6 +19,48 @@ from rich.progress import (
     BarColumn,
     TimeElapsedColumn,
 )
+from rich.panel import Panel
+from rich.text import Text
+from rich.align import Align
+
+
+def show_next_steps():
+    steps = Text()
+    steps.append("NEXT STEPS\n", style="bold cyan")
+    steps.append("\n")
+
+    steps.append("1. Update environment variables\n", style="bold green")
+    steps.append(
+        "   • Open the .env file and fill in all required values\n"
+        "   • Database URL, secrets, API keys, etc.\n\n",
+        style="white",
+    )
+
+    steps.append("2. Run database migrations\n", style="bold green")
+    steps.append(
+        "   • Generate migration:\n"
+        '     alembic revision --autogenerate -m "initial migration"\n\n'
+        "   • Apply migration:\n"
+        "     alembic upgrade head\n\n"
+        "   ⚠ This will create the sample `Hero` model in the database.\n"
+        "     If you don’t need it, remove the model and clean up migrations first.\n\n",
+        style="yellow",
+    )
+
+    steps.append("3. Start the server\n", style="bold green")
+    steps.append(
+        "   • python run.py\n\n",
+        style="white",
+    )
+
+    panel = Panel(
+        Align.left(steps),
+        title="🚀 Project Ready",
+        border_style="cyan",
+        padding=(1, 2),
+    )
+
+    console.print(panel)
 
 
 console = Console()
@@ -37,7 +79,7 @@ BANNER = r"""
 [/bold cyan]
 """
 
-APP_VERSION = "0.3.9"
+APP_VERSION = "0.4.0"
 
 
 @app.callback()
@@ -178,10 +220,7 @@ def build(
             "Project setup completed successfully.",
             fg=typer.colors.GREEN,
         )
-        typer.secho(
-            "Update .env File Content Before Starting The Server",
-            fg=typer.colors.MAGENTA,
-        )
+        show_next_steps()
 
     except Exception as e:
         typer.secho(

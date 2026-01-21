@@ -2,6 +2,12 @@
 
 from textwrap import dedent
 
+APP_DATABASE_INIT_CONTENT_FOR_SQL = dedent("""
+from .session import SessionDeps
+
+__all__ = ["SessionDeps"]
+""")
+
 APP_DATABASE_SESSION_CONTENT_FOR_SQL = dedent('''
 """
 Database Connections Management

@@ -5,8 +5,9 @@ from textwrap import dedent
 
 APP_API_INIT_CONTENT = dedent("""
 from app.api.common import router as common_router
+from app.api.v1 import router as v1_router
 
-__all__ = ["common_router"]
+__all__ = ["common_router", "v1_router"]
 """)
 
 
@@ -44,5 +45,4 @@ async def get_docs():
         theme=Theme.PURPLE,
         hide_models=True,
     )
-
 """)

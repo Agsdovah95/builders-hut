@@ -10,23 +10,38 @@ class SetupFiles(BaseSetup):
     FILES_TO_CREATE = [
         # Main application file
         "app/main.py",
-        # Core configuration and logger files
-        "app/core/config.py",
-        "app/core/logger.py",
-        "app/core/lifespan.py",
-        "app/core/__init__.py",
-        # __init__.py files for package initialization
-        "app/models/__init__.py",
-        "app/schemas/__init__.py",
-        "app/services/__init__.py",
-        "app/repositories/__init__.py",
-        "app/utils/__init__.py",
-        "app/database/__init__.py",
-        "app/workers/__init__.py",
+        # api files
         "app/api/__init__.py",
-        "app/api/v1/__init__.py",
         "app/api/common.py",
+        "app/api/v1/__init__.py",
+        "app/api/v1/hero.py",
+        # Core configuration and logger files
+        "app/core/__init__.py",
+        "app/core/config.py",
+        "app/core/lifespan.py",
+        "app/core/logger.py",
+        # database files
+        "app/database/__init__.py",
+        "app/database/session.py",
+        # Model files
+        "app/models/__init__.py",
+        "app/models/common.py",
+        "app/models/hero.py",
+        # Repository files
+        "app/repositories/__init__.py",
+        "app/repositories/hero.py",
+        # Schema files
+        "app/schemas/__init__.py",
+        # Service files
+        "app/services/__init__.py",
+        "app/services/hero.py",
+        # templates files
         "app/templates/index.html",
+        # Utils files
+        "app/utils/__init__.py",
+        "app/utils/common.py",
+        # Workers files
+        "app/workers/__init__.py",
         # Test initialization file
         "tests/__init__.py",
         # Configuration
@@ -34,6 +49,7 @@ class SetupFiles(BaseSetup):
         ".gitignore",
         "requirements.txt",
         "requirements_dev.txt",
+        "run.py",
     ]
 
     def create(self):
