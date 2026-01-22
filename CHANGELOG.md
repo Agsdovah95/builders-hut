@@ -4,6 +4,7 @@
 - Global Error Handling
 - API Docs
 - Hero Endpoints
+- New UI added
 
 # 21-01-2026
 

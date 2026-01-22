@@ -1,67 +1,33 @@
+import time
 from pathlib import Path
 
 import typer
+from rich.align import Align
 from rich.console import Console
-from typing import Literal
-from builders_hut.setups import (
-    SetupEnv,
-    SetupFiles,
-    SetupFileWriter,
-    SetupStructure,
-    SetupDatabase,
-    SetupGithub,
-)
-from builders_hut.utils import setup_project
+from rich.live import Live
+from rich.panel import Panel
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
     TextColumn,
-    BarColumn,
-    TimeElapsedColumn,
 )
-from rich.panel import Panel
+from rich.prompt import Prompt
 from rich.text import Text
-from rich.align import Align
 
+from builders_hut.setups import (
+    SetupDatabase,
+    SetupEnv,
+    SetupFiles,
+    SetupFileWriter,
+    SetupGithub,
+    SetupStructure,
+)
+from builders_hut.utils import setup_project
 
-def show_next_steps():
-    steps = Text()
-    steps.append("NEXT STEPS\n", style="bold cyan")
-    steps.append("\n")
-
-    steps.append("1. Update environment variables\n", style="bold green")
-    steps.append(
-        "   • Open the .env file and fill in all required values\n"
-        "   • Database URL, secrets, API keys, etc.\n\n",
-        style="white",
-    )
-
-    steps.append("2. Run database migrations\n", style="bold green")
-    steps.append(
-        "   • Generate migration:\n"
-        '     alembic revision --autogenerate -m "initial migration"\n\n'
-        "   • Apply migration:\n"
-        "     alembic upgrade head\n\n"
-        "   ⚠ This will create the sample `Hero` model in the database.\n"
-        "     If you don’t need it, remove the model and clean up migrations first.\n\n",
-        style="yellow",
-    )
-
-    steps.append("3. Start the server\n", style="bold green")
-    steps.append(
-        "   • python run.py\n\n",
-        style="white",
-    )
-
-    panel = Panel(
-        Align.left(steps),
-        title="🚀 Project Ready",
-        border_style="cyan",
-        padding=(1, 2),
-    )
-
-    console.print(panel)
-
+# ------------------------------------------------------------------
+# App setup
+# ------------------------------------------------------------------
 
 console = Console()
 app = typer.Typer(
@@ -69,17 +35,179 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 
+APP_VERSION = "0.4.3"
+
 BANNER = r"""
-[bold cyan]
  ____        _ _     _                 _   _       _   
 | __ ) _   _(_) | __| | ___ _ __ ___  | | | |_   _| |_ 
 |  _ \| | | | | |/ _` |/ _ \ '__/ __| | |_| | | | | __|
 | |_) | |_| | | | (_| |  __/ |  \__ \ |  _  | |_| | |_ 
 |____/ \__,_|_|_|\__,_|\___|_|  |___/ |_| |_|\__,_|\__|
-[/bold cyan]
 """
 
-APP_VERSION = "0.4.2"
+# ------------------------------------------------------------------
+# UI helpers
+# ------------------------------------------------------------------
+
+
+def render_header() -> Panel:
+    text = Text()
+    text.append(BANNER, style="bold cyan")
+    text.append(f"\nVersion {APP_VERSION}\n", style="bold cyan")
+
+    return Panel(
+        Align.center(text),
+        border_style="cyan",
+        padding=(1, 2),
+    )
+
+
+def clear_and_render(panel: Panel):
+    console.clear()
+    console.print(render_header())
+    console.print(panel)
+
+
+def ask_question(title: str, question: str, default: str) -> str:
+    body = Text()
+    body.append(f"{title}\n\n", style="bold cyan")
+    body.append(question, style="white")
+
+    panel = Panel(
+        body,
+        border_style="cyan",
+        padding=(1, 2),
+    )
+
+    clear_and_render(panel)
+    return Prompt.ask("", default=default)
+
+
+# ------------------------------------------------------------------
+# Wizard
+# ------------------------------------------------------------------
+
+
+def run_wizard():
+    answers = {}
+
+    answers["name"] = ask_question(
+        "Project Name",
+        "Enter your project name",
+        Path.cwd().name,
+    )
+
+    answers["description"] = ask_question(
+        "Project Description",
+        "Describe your project",
+        "A new project",
+    )
+
+    answers["version"] = ask_question(
+        "Project Version",
+        "Initial project version",
+        "0.1.0",
+    )
+
+    answers["database_type"] = ask_question(
+        "Database Type",
+        "Choose database type (sql / nosql)",
+        "sql",
+    )
+
+    answers["database_provider"] = ask_question(
+        "Database Provider",
+        "postgres / mysql / sqlite / mongodb",
+        "postgres",
+    )
+
+    return answers
+
+
+# ------------------------------------------------------------------
+# Progress runner (INSIDE BOX)
+# ------------------------------------------------------------------
+
+
+"""Steps"""
+
+STEPS = {
+    "SetupStructure": "Setting up project structure",
+    "SetupFiles": "Adding base files",
+    "SetupGithub": "Setting up GitHub repository",
+    "SetupEnv": "Installing packages and creating .env",
+    "SetupFileWriter": "Updating file contents",
+    "SetupDatabase": "Setting up database files",
+}
+
+
+def run_setup_with_progress(
+    project_location: Path,
+    setup_steps: list,
+    **kwargs,
+):
+    progress = Progress(
+        SpinnerColumn(),
+        TextColumn("[bold cyan]{task.description}"),
+        BarColumn(),
+    )
+
+    task = progress.add_task("Initializing project...", total=len(setup_steps))
+
+    panel = Panel(
+        progress,
+        title="Setting up project",
+        border_style="cyan",
+        padding=(1, 2),
+    )
+
+    with Live(panel, console=console, refresh_per_second=10):
+        for step in setup_steps:
+            progress.update(task, description=f"{STEPS[step.__name__]}")
+            setup_project(project_location, step, **kwargs)
+            time.sleep(0.5)
+            progress.advance(task)
+
+
+# ------------------------------------------------------------------
+# Final screen
+# ------------------------------------------------------------------
+
+
+def show_success():
+    text = Text()
+    text.append("✅ Project setup completed successfully!\n\n", style="bold green")
+    text.append("NEXT STEPS\n", style="bold cyan")
+    text.append(
+        "\n1. Update environment variables\n"
+        "   • Open .env and fill required values\n\n"
+        "2. Run database migrations\n"
+        '   • alembic revision --autogenerate -m "initial migration"\n'
+        "   • alembic upgrade head\n\n"
+        "3. Start the server\n"
+        "   • python run.py\n",
+        style="white",
+    )
+
+    text.append(
+        "\nNote:- Sample model with respective repository and service is created along with the project for user reference.\n"
+        "It is suggested to go throw them once before removing anything\n",
+        style="yellow",
+    )
+
+    panel = Panel(
+        Align.left(text),
+        border_style="green",
+        padding=(1, 2),
+        title="🚀 Ready",
+    )
+
+    clear_and_render(panel)
+
+
+# ------------------------------------------------------------------
+# Typer callbacks & commands
+# ------------------------------------------------------------------
 
 
 @app.callback()
@@ -89,15 +217,13 @@ def main(
         False,
         "--version",
         "-v",
-        help="Show the version and exit",
+        help="Show version and exit",
         is_eager=True,
     ),
 ):
-    """Builders Hut – FastAPI Scaffolding Tool"""
-    console.print(BANNER)
-
     if version:
         console.print(f"[bold green]hut version {APP_VERSION}[/bold green]")
+        raise typer.Exit()
 
     if ctx.invoked_subcommand is None:
         typer.echo(ctx.get_help())
@@ -106,53 +232,23 @@ def main(
 
 @app.command()
 def build(
-    name: str = typer.Option(
-        Path.cwd().name,
-        "--name",
-        "-n",
-        help="Project name",
-    ),
-    description: str = typer.Option(
-        "A new project",
-        "--description",
-        "-d",
-        help="Project description",
-    ),
-    version: str = typer.Option(
-        "0.1.0",
-        "--version",
-        "-v",
-        help="Project version",
-    ),
     path: Path = typer.Option(
         Path.cwd(),
         "--path",
         "-p",
         help="Project directory",
     ),
-    database_type: Literal["sql", "nosql"] = typer.Option(
-        "sql",
-        "--database-type",
-        "-dt",
-        help="Database Type (sql, nosql)",
-    ),
-    database_provider: Literal["postgres", "mysql", "sqlite", "mongodb"] = typer.Option(
-        "postgres",
-        "--database-provider",
-        "-dp",
-        help="Database Provider (postgres, mysql, sqlite, mongodb)",
-    ),
     accept_default: bool = typer.Option(
-        None,
-        "--accept_defaults",
+        False,
+        "--accept-defaults",
         "-y",
-        help="Run command with all default values selected",
+        help="Run with default values",
     ),
 ):
     """
-    Build project structure (CLI or interactive).
+    Build a new project using an interactive wizard.
     """
-    # ===== Defaults =====
+
     DEFAULTS = {
         "name": Path.cwd().name,
         "description": "A new project",
@@ -161,28 +257,11 @@ def build(
         "database_provider": "postgres",
     }
 
-    # ===== Apply defaults or prompt =====
-    if accept_default:
-        name = name or DEFAULTS["name"]
-        description = description or DEFAULTS["description"]
-        version = version or DEFAULTS["version"]
-        database_type = database_type or DEFAULTS["database_type"]
-        database_provider = database_provider or DEFAULTS["database_provider"]
-    else:
-        name = typer.prompt("Enter Project Title", default=DEFAULTS["name"])
-        description = typer.prompt(
-            "Enter Project Description", default=DEFAULTS["description"]
-        )
-        version = typer.prompt("Enter Project Version", default=DEFAULTS["version"])
-        database_type = typer.prompt(
-            "Enter Database Type", default=DEFAULTS["database_type"]
-        )
-        database_provider = typer.prompt(
-            "Enter Database Provider", default=DEFAULTS["database_provider"]
-        )
-
     try:
-        project_location = path.resolve()
+        if accept_default:
+            answers = DEFAULTS
+        else:
+            answers = run_wizard()
 
         setup_steps = [
             SetupStructure,
@@ -193,44 +272,29 @@ def build(
             SetupDatabase,
         ]
 
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[bold cyan]{task.description}"),
-            BarColumn(),
-            TimeElapsedColumn(),
-        ) as progress:
-            task = progress.add_task("Setting up project", total=len(setup_steps))
-
-            for setup_cls in setup_steps:
-                progress.update(task, description=f"Running {setup_cls.__name__}")
-
-                setup_project(
-                    project_location,
-                    setup_cls,
-                    name=name,
-                    description=description,
-                    version=version,
-                    database_type=database_type,
-                    database_provider=database_provider,
-                )
-
-                progress.advance(task)
-
-        typer.secho(
-            "Project setup completed successfully.",
-            fg=typer.colors.GREEN,
+        run_setup_with_progress(
+            project_location=path.resolve(),
+            setup_steps=setup_steps,
+            **answers,
         )
-        show_next_steps()
+
+        show_success()
 
     except Exception as e:
-        typer.secho(
-            f"Project setup failed: {e}",
-            fg=typer.colors.RED,
+        error_panel = Panel(
+            Text(f"❌ Project setup failed\n\n{e}", style="red"),
+            border_style="red",
+            padding=(1, 2),
         )
+        clear_and_render(error_panel)
         raise typer.Exit(code=1)
 
 
 @app.command()
 def add():
-    """Add components to an existing project."""
-    console.print("[yellow]Add command not implemented yet[/yellow]")
+    panel = Panel(
+        Text("Add command not implemented yet", style="yellow"),
+        border_style="yellow",
+        padding=(1, 2),
+    )
+    clear_and_render(panel)
