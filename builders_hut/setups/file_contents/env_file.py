@@ -14,10 +14,10 @@ PORT=8000
 HOST="0.0.0.0"
 
 # Database
-DB_USER="username"
-DB_PASS="password"
+DB_USER="postgres"
+DB_PASS="Agsarnab%%40095"
 DB_HOST="localhost"
 DB_PORT=5432
-DB_NAME="{title}_db"
-DB_TYPE="{DB_TYPE}"
+DB_NAME="postgres"
+DB_TYPE="postgres"
 """)

@@ -13,7 +13,13 @@ FILES_TO_WRITE: dict[Path, str] = {
     # Core
     Path("app/core/__init__.py"): file_contents.APP_CORE_INIT_CONTENT,
     Path("app/core/config.py"): file_contents.APP_CORE_CONFIG_CONTENT,
+    Path("app/core/errors.py"): file_contents.APP_CORE_ERRORS_CONTENT,
+    Path("app/core/execptions.py"): file_contents.APP_CORE_EXCEPTIONS_CONTENT,
     Path("app/core/lifespan.py"): file_contents.APP_CORE_LIFESPAN_CONTENT,
+    Path("app/core/responses.py"): file_contents.APP_CORE_API_RESPONSES_CONTENT,
+    Path(
+        "app/core/response_helper.py"
+    ): file_contents.APP_CORE_API_RESPONSE_HELPER_CONTENT,
     # Models
     Path("app/models/__init__.py"): file_contents.APP_MODELS_INIT_CONTENT,
     Path("app/models/hero.py"): file_contents.APP_MODELS_HERO_CONTENT,
@@ -26,13 +32,13 @@ FILES_TO_WRITE: dict[Path, str] = {
     Path("app/services/hero.py"): file_contents.APP_SERVICE_HERO_CONTENT,
     # Templates
     Path("app/templates/index.html"): file_contents.APP_TEMPLATES_INDEX_CONTENT,
-    # Utils
-    Path("app/utils/__init__.py"): file_contents.APP_UTILS_INIT_CONTENT,
-    Path("app/utils/common.py"): file_contents.APP_UTILS_COMMON_CONTENT,
     # .env Files
     Path(".env"): file_contents.ENV_FILE_CONTENT,
     # .gitignore File
     Path(".gitignore"): file_contents.GIT_IGNORE_FILE_CONTENT,
     # run.py
-    Path("run.py"): file_contents.RU_FILE_CONTENT,
+    Path("run.py"): file_contents.RUN_FILE_CONTENT,
+    # Schemas
+    Path("app/schemas/hero.py"): file_contents.APP_SCHEMA_HERO_CONTENT,
+    Path("app/schemas/common.py"): file_contents.APP_SCHEMA_COMMON_CONTENT,
 }

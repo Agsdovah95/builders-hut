@@ -19,86 +19,103 @@ __all__ = ["router"]
 APP_API_V1_HERO_CONTENT = dedent("""
 from fastapi import APIRouter, status
 from uuid import UUID as uuid
-from app.utils import success_response, error_response
+from app.core import success_response
 from app.services import HeroServiceDeps
+from app.schemas.hero import CreateHeroSchema, HeroResponse, UpdateHeroSchema
+from app.core.responses import (
+    SUCCESS_201_RESPONSE,
+    CONFLICT_RESPONSES,
+    VALIDATION_ERROR_RESPONSES,
+    SERVER_ERROR_RESPONSES,
+    SUCCESS_200_RESPONSE,
+    NOT_FOUND_RESPONSES,
+    SUCCESS_204_RESPONSE,
+)
 
 route = APIRouter(prefix="/heroes", tags=["Heroes"])
 
 
-@route.post("/")
-async def create_hero(name: str, service: HeroServiceDeps):
-    try:
-        hero = await service.create_hero(name)
-        return success_response(
-            message="Hero created successfully",
-            data=hero.to_dict(),
-            status_code=status.HTTP_201_CREATED,
-        )
-    except Exception as e:
-        return error_response(
-            message="Failed to create hero",
-            data=str(e),
-            status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="hero_creation_failed",
-        )
+@route.post(
+    "/",
+    summary="Create A Hero",
+    description="Create a new hero with the given name.",
+    status_code=status.HTTP_201_CREATED,
+    response_model=HeroResponse,
+    responses={
+        **SUCCESS_201_RESPONSE,
+        **CONFLICT_RESPONSES,
+        **VALIDATION_ERROR_RESPONSES,
+        **SERVER_ERROR_RESPONSES,
+    },
+)
+async def create_hero(payload: CreateHeroSchema, service: HeroServiceDeps):
+    hero = await service.create_hero(name=payload.name)
+    return success_response(
+        message="Hero created successfully",
+        data=hero,
+        status_code=status.HTTP_201_CREATED,
+    )
 
 
-@route.get("/{hero_id}")
+@route.get(
+    "/{hero_id}",
+    summary="Get A Hero Details",
+    description="Get a Hero By ID.",
+    status_code=status.HTTP_200_OK,
+    response_model=HeroResponse,
+    responses={
+        **SUCCESS_200_RESPONSE,
+        **VALIDATION_ERROR_RESPONSES,
+        **NOT_FOUND_RESPONSES,
+        **SERVER_ERROR_RESPONSES,
+    },
+)
 async def get_hero(hero_id: uuid, service: HeroServiceDeps):
-    try:
-        hero = await service.get_hero(hero_id)
-        if not hero:
-            return error_response(
-                message="Hero not found",
-                data=None,
-                status_code=status.HTTP_404_NOT_FOUND,
-                error_code="hero_not_found",
-            )
-        return success_response(
-            message="Hero retrieved successfully",
-            data=hero.to_dict() if hero else None,
-            status_code=status.HTTP_200_OK,
-        )
-    except Exception as e:
-        return error_response(
-            message="Failed to retrieve hero",
-            data=str(e),
-            status_code=status.HTTP_400_BAD_REQUEST,
-            error_code="hero_retrieval_failed",
-        )
+    hero = await service.get_hero(hero_id)
+    return success_response(
+        message="Hero retrieved successfully",
+        data=hero,
+        status_code=status.HTTP_200_OK,
+    )
 
 
-@route.put("/{hero_id}")
-async def update_hero(service: HeroServiceDeps, hero_id: uuid, name: str | None = None):
-    try:
-        hero = await service.update_hero(hero_id, name)
-        return success_response(
-            message="Hero updated successfully",
-            data=hero.to_dict(),
-            status_code=status.HTTP_200_OK,
-        )
-    except LookupError:
-        return error_response(
-            message="Hero not found",
-            data=None,
-            status_code=status.HTTP_404_NOT_FOUND,
-            error_code="hero_not_found",
-        )
+@route.put(
+    "/{hero_id}",
+    summary="Update A Hero Details",
+    description="Update hero name by hero ID",
+    status_code=status.HTTP_200_OK,
+    response_model=HeroResponse,
+    responses={
+        **SUCCESS_200_RESPONSE,
+        **VALIDATION_ERROR_RESPONSES,
+        **NOT_FOUND_RESPONSES,
+        **CONFLICT_RESPONSES,
+        **SERVER_ERROR_RESPONSES,
+    },
+)
+async def update_hero(payload: UpdateHeroSchema, service: HeroServiceDeps):
+    hero = await service.update_hero(hero_id=payload.id, name=payload.name)
+    return success_response(
+        message="Hero updated successfully",
+        data=hero,
+        status_code=status.HTTP_200_OK,
+    )
 
 
-@route.delete("/{hero_id}")
+@route.delete(
+    "/{hero_id}",
+    summary="Delete A Hero",
+    description="Delete hero by hero ID",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+    responses={
+        **SUCCESS_204_RESPONSE,
+        **VALIDATION_ERROR_RESPONSES,
+        **NOT_FOUND_RESPONSES,
+        **SERVER_ERROR_RESPONSES,
+    },
+)
 async def delete_hero(hero_id: uuid, service: HeroServiceDeps):
-    try:
-        await service.delete_hero(hero_id)
-        return success_response(
-            message="Hero deleted successfully",
-            status_code=status.HTTP_200_OK,
-        )
-    except Exception as e:
-        return error_response(
-            message="Hero not found",
-            data=str(e),
-            status_code=status.HTTP_404_NOT_FOUND,
-            error_code="hero_not_found",
-        )
+    await service.delete_hero(hero_id)
+    return
 """)

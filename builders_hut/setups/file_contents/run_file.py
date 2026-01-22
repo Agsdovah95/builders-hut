@@ -2,7 +2,7 @@
 
 from textwrap import dedent
 
-RU_FILE_CONTENT = dedent(
+RUN_FILE_CONTENT = dedent(
     """
 import uvicorn
 from app.core.config import settings

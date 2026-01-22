@@ -12,9 +12,12 @@ __all__ = ["HeroServiceDeps"]
 
 APP_SERVICE_HERO_CONTENT = dedent(
     """
-from app.repositories import HeroRepository, HeroRepoDeps
 from typing import Annotated
+
 from fastapi import Depends
+
+from app.core.errors import ValidationError
+from app.repositories import HeroRepoDeps, HeroRepository
 
 
 class HeroService:
@@ -22,30 +25,31 @@ class HeroService:
         self.repo = repo
 
     async def get_hero(self, hero_id):
-        return await self.repo.get_hero_by_id(hero_id)
+        hero = await self.repo.get_hero_by_id(hero_id)
+        return hero.to_dict()
 
     async def create_hero(self, name: str):
         if not name or not name.strip():
-            raise ValueError("Hero name cannot be empty")
+            raise ValidationError(
+                message="Hero name cannot be empty",
+                data={"field": "name"},
+            )
 
-        return await self.repo.create_hero(name=name.strip())
+        hero = await self.repo.create_hero(name=name.strip())
+        return hero.to_dict()
 
     async def update_hero(self, hero_id, name: str | None = None):
         if name is not None and not name.strip():
-            raise ValueError("Hero name cannot be empty")
+            raise ValidationError(
+                message="Hero name cannot be empty",
+                data={"field": "name"},
+            )
 
-        hero = await self.repo.update_hero(hero_id, name=name)
-        if not hero:
-            raise LookupError("Hero not found")
-
-        return hero
+        hero = await self.repo.update_hero(hero_id, name=name.strip() if name else None)
+        return hero.to_dict()
 
     async def delete_hero(self, hero_id):
-        hero = await self.repo.delete_hero(hero_id)
-        if not hero:
-            raise LookupError("Hero not found")
-
-        return hero
+        return await self.repo.delete_hero(hero_id)
 
 
 def get_hero_service(

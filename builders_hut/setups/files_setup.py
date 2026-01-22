@@ -18,8 +18,12 @@ class SetupFiles(BaseSetup):
         # Core configuration and logger files
         "app/core/__init__.py",
         "app/core/config.py",
+        "app/core/errors.py",
+        "app/core/execptions.py",
         "app/core/lifespan.py",
         "app/core/logger.py",
+        "app/core/response_helper.py",
+        "app/core/responses.py",
         # database files
         "app/database/__init__.py",
         "app/database/session.py",
@@ -32,6 +36,8 @@ class SetupFiles(BaseSetup):
         "app/repositories/hero.py",
         # Schema files
         "app/schemas/__init__.py",
+        "app/schemas/hero.py",
+        "app/schemas/common.py",
         # Service files
         "app/services/__init__.py",
         "app/services/hero.py",
@@ -39,7 +45,6 @@ class SetupFiles(BaseSetup):
         "app/templates/index.html",
         # Utils files
         "app/utils/__init__.py",
-        "app/utils/common.py",
         # Workers files
         "app/workers/__init__.py",
         # Test initialization file

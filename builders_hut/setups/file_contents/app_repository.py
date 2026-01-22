@@ -8,50 +8,83 @@ from .hero import HeroRepoDeps, HeroRepository
 __all__ = ["HeroRepoDeps", "HeroRepository"]
 """)
 
-APP_REPO_HERO_CONTENT_FOR_SQL = dedent('''
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from app.models import Hero
-from app.database import SessionDeps
+APP_REPO_HERO_CONTENT_FOR_SQL = dedent("""
 from typing import Annotated
+
 from fastapi import Depends
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError as SAIntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.errors import (
+    DatabaseError,
+    DuplicateKeyError,
+    NotFoundError,
+)
+from app.database import SessionDeps
+from app.models import Hero
 
 
 class HeroRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_hero_by_id(self, hero_id):
+    async def get_hero_by_id(self, hero_id) -> Hero:
         result = await self.session.execute(select(Hero).where(Hero.id == hero_id))
-        return result.scalar_one_or_none()
+        hero = result.scalar_one_or_none()
 
-    async def create_hero(self, name: str):
-        hero = Hero(name=name)
-        self.session.add(hero)
-        await self.session.commit()
-        await self.session.refresh(hero)
+        if not hero:
+            raise NotFoundError("Hero not found")
+
         return hero
 
-    async def update_hero(self, hero_id, name: str | None = None):
+    async def create_hero(self, name: str) -> Hero:
+        hero = Hero(name=name)
+        self.session.add(hero)
+
+        try:
+            await self.session.commit()
+            await self.session.refresh(hero)
+            return hero
+
+        except SAIntegrityError as e:
+            await self.session.rollback()
+            raise DuplicateKeyError("Hero with this name already exists") from e
+
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseError("Failed to create hero") from e
+
+    async def update_hero(self, hero_id, name: str | None = None) -> Hero:
         hero = await self.get_hero_by_id(hero_id)
-        if not hero:
-            return None
 
         if name is not None:
             hero.name = name
 
-        await self.session.commit()
-        await self.session.refresh(hero)
-        return hero
+        try:
+            await self.session.commit()
+            await self.session.refresh(hero)
+            return hero
 
-    async def delete_hero(self, hero_id):
+        except SAIntegrityError as e:
+            await self.session.rollback()
+            raise DuplicateKeyError("Hero with this name already exists") from e
+
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseError("Failed to update hero") from e
+
+    async def delete_hero(self, hero_id) -> Hero:
         hero = await self.get_hero_by_id(hero_id)
-        if not hero:
-            return None
 
-        await self.session.delete(hero)
-        await self.session.commit()
-        return hero
+        try:
+            await self.session.delete(hero)
+            await self.session.commit()
+            return hero
+
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseError("Failed to delete hero") from e
 
 
 def get_hero_repo(
@@ -61,4 +94,4 @@ def get_hero_repo(
 
 
 HeroRepoDeps = Annotated[HeroRepository, Depends(get_hero_repo)]
-''')
+""")
