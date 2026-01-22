@@ -1,3 +1,10 @@
+# 22-01-2026
+
+## Added
+- Global Error Handling
+- API Docs
+- Hero Endpoints
+
 # 21-01-2026
 
 ## Added

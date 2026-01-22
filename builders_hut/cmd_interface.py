@@ -79,7 +79,7 @@ BANNER = r"""
 [/bold cyan]
 """
 
-APP_VERSION = "0.4.1"
+APP_VERSION = "0.4.2"
 
 
 @app.callback()
