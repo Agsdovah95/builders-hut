@@ -37,6 +37,14 @@ classifiers = [
 ]
 dependencies = ["build", "twine", "typer", "tomlkit", "rich"]
 
+# Optional dependencies for development and testing
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/Agsdovah95/builders-hut"
 Documentation = "https://github.com/Agsdovah95/builders-hut/blob/main/README.md"
@@ -49,3 +57,22 @@ hut = "builders_hut.cmd_interface:app"
 
 [tool.setuptools.packages.find]
 include = ["builders_hut*", "hut*"]
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --cov=builders_hut --cov-report=term-missing"
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["builders_hut"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]

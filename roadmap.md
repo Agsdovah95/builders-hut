@@ -84,27 +84,27 @@
 
 ### 0.1 Security Fix
 
-- [ ] Remove hardcoded credentials from `builders_hut/setups/file_contents/env_file.py`
-- [ ] Replace with placeholder values: `DB_USER="your_username"`, `DB_PASS="your_password"`
-- [ ] Add warning comment: `# IMPORTANT: Change these values before deployment`
+- [x] Remove hardcoded credentials from `builders_hut/setups/file_contents/env_file.py`
+- [x] Replace with placeholder values: `DB_USER="your_username"`, `DB_PASS="your_password"`
+- [x] Add warning comment: `# IMPORTANT: Change these values before deployment`
 
 ### 0.2 Dependency Fix
 
-- [ ] Add `rich` to dependencies in `pyproject.toml`
-- [ ] Verify all imports have corresponding dependencies
-- [ ] Run `pip install -e .` on fresh environment to validate
+- [x] Add `rich` to dependencies in `pyproject.toml`
+- [x] Verify all imports have corresponding dependencies
+- [x] Run `pip install -e .` on fresh environment to validate
 
 ### 0.3 Typo Fixes
 
-- [ ] Rename `file_writter.py` → `file_writer.py`
-- [ ] Update all imports referencing the old filename
-- [ ] Fix `execptions.py` → `exceptions.py` in generated code templates
-- [ ] Search codebase for any other typos
+- [x] Rename `file_writter.py` → `file_writer.py`
+- [x] Update all imports referencing the old filename
+- [x] Fix `execptions.py` → `exceptions.py` in generated code templates
+- [x] Search codebase for any other typos
 
 ### 0.4 Code Cleanup
 
-- [ ] Remove duplicate export in `file_contents/__init__.py`
-- [ ] Ensure all `__init__.py` files have proper exports
+- [x] Remove duplicate export in `file_contents/__init__.py`
+- [x] Ensure all `__init__.py` files have proper exports
 
 **Deliverables:**
 - Clean, secure codebase

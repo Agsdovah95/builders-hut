@@ -17,7 +17,12 @@ class SetupFileWriter(BaseSetup):
                     title=self.name,
                     description=self.description,
                     version=self.version,
-                    DB_TYPE=self.database_provider,
+                    db_type=self.database_provider,
+                    db_user=self.db_user,
+                    db_pass=self.db_pass,
+                    db_host=self.db_host,
+                    db_port=self.db_port,
+                    db_name=self.db_name,
                 )
             path = self.location / path
             write_file(path, content)
@@ -28,9 +33,19 @@ class SetupFileWriter(BaseSetup):
         description: str,
         version: str,
         database_provider: str,
+        db_user: str = "your_username",
+        db_pass: str = "your_password",
+        db_host: str = "database_host",
+        db_port: str = "database_port",
+        db_name: str = "database_name",
         **kwargs,
     ):
         self.name = name
         self.description = description
         self.version = version
         self.database_provider = database_provider
+        self.db_user = db_user
+        self.db_pass = db_pass
+        self.db_host = db_host
+        self.db_port = db_port
+        self.db_name = db_name
