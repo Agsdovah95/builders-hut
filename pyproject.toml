@@ -8,12 +8,8 @@ version = "0.4.3"
 requires-python = ">=3.13"
 description = "FastAPI Scaffolding Tool"
 readme = "README.md"
-authors = [
-    {name = "Arnab Gupta", email = "arnabgupta84@gmail.com"},
-]
-maintainers = [
-  {name = "Arnab Gupta", email = "arnabgupta84@gmail.com"},
-]
+authors = [{ name = "Arnab Gupta", email = "arnabgupta84@gmail.com" }]
+maintainers = [{ name = "Arnab Gupta", email = "arnabgupta84@gmail.com" }]
 license = "BSD-3-Clause"
 keywords = [
     "fastapi",
@@ -39,12 +35,7 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
 ]
-dependencies = [
-    "build",
-    "twine",
-    "typer",
-    "tomlkit"
-]
+dependencies = ["build", "twine", "typer", "tomlkit", "rich"]
 
 [project.urls]
 Homepage = "https://github.com/Agsdovah95/builders-hut"

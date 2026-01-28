@@ -14,7 +14,7 @@ FILES_TO_WRITE: dict[Path, str] = {
     Path("app/core/__init__.py"): file_contents.APP_CORE_INIT_CONTENT,
     Path("app/core/config.py"): file_contents.APP_CORE_CONFIG_CONTENT,
     Path("app/core/errors.py"): file_contents.APP_CORE_ERRORS_CONTENT,
-    Path("app/core/execptions.py"): file_contents.APP_CORE_EXCEPTIONS_CONTENT,
+    Path("app/core/exceptions.py"): file_contents.APP_CORE_EXCEPTIONS_CONTENT,
     Path("app/core/lifespan.py"): file_contents.APP_CORE_LIFESPAN_CONTENT,
     Path("app/core/responses.py"): file_contents.APP_CORE_API_RESPONSES_CONTENT,
     Path(

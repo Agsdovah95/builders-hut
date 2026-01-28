@@ -19,7 +19,7 @@ class SetupFiles(BaseSetup):
         "app/core/__init__.py",
         "app/core/config.py",
         "app/core/errors.py",
-        "app/core/execptions.py",
+        "app/core/exceptions.py",
         "app/core/lifespan.py",
         "app/core/logger.py",
         "app/core/response_helper.py",

@@ -6,7 +6,7 @@ APP_MAIN_CONTENT = dedent('''
 from fastapi import FastAPI
 from app.core import settings, lifespan
 from app.api import common_router, v1_router
-from app.core.execptions import register_exception_handlers
+from app.core.exceptions import register_exception_handlers
 
 
 def create_app() -> FastAPI:
