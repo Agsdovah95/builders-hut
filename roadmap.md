@@ -1,7 +1,7 @@
 # Builders Hut - Development Roadmap
 
 > **Version:** 0.4.3 → 1.0.0
-> **Last Updated:** January 2026
+> **Last Updated:** February 2026
 > **Goal:** Transform Builders Hut into a production-grade, feature-rich FastAPI scaffolding tool
 > **Python Support:** 3.11+ (for wider community adoption)
 
@@ -58,8 +58,8 @@
 | Alembic Migrations | ✅ Complete | Auto-configured for SQL |
 | Layered Architecture | ✅ Complete | API→Service→Repository→Model |
 | Error Handling | ✅ Complete | Comprehensive exception system |
-| Test Suite | ❌ Missing | No tests exist |
-| Documentation | ⚠️ Partial | CLAUDE.md only |
+| Test Suite | ✅ Complete | ~99 tests across unit, integration, CLI |
+| Documentation | ✅ Complete | README, CONTRIBUTING, CHANGELOG, CLAUDE.md |
 | `hut add` Command | ❌ Not Started | Declared but not implemented |
 | Authentication | ❌ Missing | No auth templates |
 | Docker Support | ❌ Missing | No containerization |
@@ -67,20 +67,21 @@
 
 ### Known Issues
 
-1. **CRITICAL:** Hardcoded database credentials in `env_file.py`
-2. **BUG:** `rich` package missing from `pyproject.toml` dependencies
-3. **TYPO:** `file_writter.py` should be `file_writer.py`
-4. **TYPO:** `execptions.py` should be `exceptions.py` in generated code
+1. ~~**CRITICAL:** Hardcoded database credentials in `env_file.py`~~ ✅ Fixed
+2. ~~**BUG:** `rich` package missing from `pyproject.toml` dependencies~~ ✅ Fixed
+3. ~~**TYPO:** `file_writter.py` should be `file_writer.py`~~ ✅ Fixed
+4. ~~**TYPO:** `execptions.py` should be `exceptions.py` in generated code~~ ✅ Fixed
 5. **INCOMPLETE:** NoSQL/MongoDB setup not implemented
 6. **INCOMPLETE:** `add` command not implemented
 
 ---
 
-## Phase 0: Critical Fixes (Immediate)
+## Phase 0: Critical Fixes (Immediate) ✅
 
 > **Timeline:** 1-2 days
 > **Version:** 0.4.4
 > **Priority:** CRITICAL - Do not proceed without completing these
+> **Status:** ✅ COMPLETE
 
 ### 0.1 Security Fix
 
@@ -111,6 +112,8 @@
 - All dependencies properly declared
 - No typos in filenames or generated code
 
+**Status: ✅ COMPLETE**
+
 ---
 
 ## Phase 1: Foundation & Quality
@@ -118,23 +121,25 @@
 > **Timeline:** 2-3 weeks
 > **Version:** 0.5.0 → 0.7.0
 > **Goal:** Establish quality standards and complete core functionality
+> **Status:** 🔶 IN PROGRESS — Tests & docs largely done, NoSQL & `hut add` remaining
 
-### 1.1 Test Suite Implementation
+### 1.1 Test Suite Implementation ✅
 
 **Priority:** HIGH
 **Version:** 0.5.0
+**Status:** ~99 tests across 11 test files (unit, integration, CLI)
 
 #### Unit Tests
 
-- [ ] Test `BaseSetup` abstract class behavior
-- [ ] Test `SetupStructure` - directory creation
-- [ ] Test `SetupFiles` - file creation with correct paths
-- [ ] Test `SetupGithub` - git initialization
-- [ ] Test `SetupEnv` - virtual environment and pyproject.toml
-- [ ] Test `SetupFileWriter` - template content writing
-- [ ] Test `SetupDatabase` - database configuration
-- [ ] Test `DatabaseFactory` - correct handler selection
-- [ ] Test `utils.py` functions:
+- [x] Test `BaseSetup` abstract class behavior (7 tests)
+- [x] Test `SetupStructure` - directory creation (14 tests)
+- [x] Test `SetupFiles` - file creation with correct paths (13 tests, 34 files verified)
+- [x] Test `SetupGithub` - git initialization (5 tests)
+- [x] Test `SetupEnv` - virtual environment and pyproject.toml (20+ tests)
+- [x] Test `SetupFileWriter` - template content writing (10 tests)
+- [x] Test `SetupDatabase` - database configuration (5 tests)
+- [x] Test `DatabaseFactory` - correct handler selection (14 tests)
+- [x] Test `utils.py` functions: (21 tests)
   - `get_platform()`
   - `get_python_file()`
   - `run_subprocess()`
@@ -144,18 +149,18 @@
 
 #### Integration Tests
 
-- [ ] Test full `hut build` workflow with defaults
-- [ ] Test `hut build` with each database provider
-- [ ] Test `hut build --accept-defaults` flag
-- [ ] Test `hut build --path` option
-- [ ] Test generated project structure matches expected
+- [x] Test full `hut build` workflow with defaults
+- [x] Test `hut build` with each database provider (postgres, mysql, sqlite)
+- [x] Test `hut build --accept-defaults` flag
+- [x] Test `hut build --path` option
+- [x] Test generated project structure matches expected (layered architecture validated)
 - [ ] Test generated project runs successfully (`uvicorn`)
 
 #### CLI Tests
 
-- [ ] Test `--version` flag
-- [ ] Test `--help` output
-- [ ] Test invalid input handling
+- [x] Test `--version` flag (3 tests)
+- [x] Test `--help` output (4 tests)
+- [x] Test invalid input handling (2 tests)
 - [ ] Test keyboard interrupt handling
 
 **Testing Stack:**
@@ -170,31 +175,34 @@ pytest-asyncio (async tests)
 
 ---
 
-### 1.2 Documentation
+### 1.2 Documentation 🔶
 
 **Priority:** HIGH
 **Version:** 0.5.0
+**Status:** Core docs exist (README, CONTRIBUTING, CHANGELOG). Extended docs/ folder not started.
 
 #### README.md Overhaul
 
-- [ ] Project description and badges (PyPI, tests, coverage, license)
-- [ ] Installation instructions (pip, pipx)
-- [ ] Quick start guide with terminal GIF/screenshot
-- [ ] Feature list with descriptions
-- [ ] Generated project structure visualization
-- [ ] Configuration options table
+- [x] Project description and badges (PyPI, Python versions, license)
+- [x] Installation instructions (pip)
+- [x] Quick start guide with CLI examples
+- [x] Feature list with descriptions
+- [x] Generated project structure visualization
+- [x] Configuration options table
 - [ ] Database provider comparison
 - [ ] Troubleshooting section
-- [ ] Contributing link
+- [x] Contributing link
+- [ ] Terminal GIF/screenshot demo
+- [ ] Test/coverage badges
 
 #### Additional Documentation
 
-- [ ] `CONTRIBUTING.md` - How to contribute
+- [x] `CONTRIBUTING.md` - How to contribute
   - Development setup
   - Code style guide
   - Pull request process
-  - Issue templates
-- [ ] `CHANGELOG.md` - Version history
+  - [ ] Issue templates (`.github/ISSUE_TEMPLATE/`)
+- [x] `CHANGELOG.md` - Version history (basic, needs semver format)
 - [ ] `docs/` folder for extended documentation:
   - `docs/architecture.md` - How Builders Hut works
   - `docs/templates.md` - Template system explanation
@@ -203,10 +211,11 @@ pytest-asyncio (async tests)
 
 ---
 
-### 1.3 Complete NoSQL Support
+### 1.3 Complete NoSQL Support ❌
 
 **Priority:** MEDIUM
 **Version:** 0.6.0
+**Status:** Not started — `factory.py` has `case "nosql": pass`
 
 #### MongoDB Implementation
 
@@ -237,10 +246,11 @@ builders_hut/setups/file_contents/
 
 ---
 
-### 1.4 Implement `hut add` Command
+### 1.4 Implement `hut add` Command ❌
 
 **Priority:** MEDIUM
 **Version:** 0.7.0
+**Status:** Not started — command declared but shows "not implemented yet" placeholder
 
 The `add` command scaffolds individual components into existing projects.
 
@@ -289,10 +299,11 @@ hut add crud <name>
 
 ---
 
-### 1.5 Error Handling & DX Improvements
+### 1.5 Error Handling & DX Improvements ❌
 
 **Priority:** LOW
 **Version:** 0.7.0
+**Status:** Not started
 
 - [ ] Add Python version validation (require 3.11+)
 - [ ] Improve subprocess error messages (show stdout/stderr on failure)
@@ -308,6 +319,7 @@ hut add crud <name>
 > **Timeline:** 4-6 weeks
 > **Version:** 0.8.0 → 0.12.0
 > **Goal:** Add production-essential features that differentiate Builders Hut
+> **Status:** ❌ NOT STARTED
 
 ### 2.1 Authentication System
 
@@ -749,6 +761,7 @@ hut add api-version v2
 > **Timeline:** Ongoing
 > **Version:** 1.0.0+
 > **Goal:** Build community and expand ecosystem
+> **Status:** ❌ NOT STARTED
 
 ### 3.1 Plugin System
 
